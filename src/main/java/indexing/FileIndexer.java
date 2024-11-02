@@ -1,8 +1,8 @@
 package indexing;
 import tokenizing.Tokenizer;
 
-import java.io.IOException;
-import java.util.List;
+import java.io.File;
+import java.util.Set;
 
 
 /**
@@ -21,31 +21,38 @@ public abstract class FileIndexer {
     /**
      * Indexes a given file.
      *
-     * @param filePath the path of the text file to be indexed.
+     * @param file the text file to be indexed.
      * @return a boolean value indicating whether the indexing was successful or not.
-     * @throws IOException if an I/O error occurs while reading the file.
      */
-    public abstract boolean indexFile(String filePath);
+    public abstract boolean indexFile(File file);
 
     /**
      * Indexes multiple files specified by their file paths.
      *
-     * @param filePath variable number of file paths to be indexed
+     * @param file variable number of files to be indexed
      * @return a boolean value indicating whether the indexing operation was successful or not
      */
-    public abstract boolean indexFiles(String... filePath);
+    public abstract boolean indexFiles(File... file);
 
 
     /**
      * Searches the index for files containing a particular phrase or keyword.
      *
      * @param keyword the keyword to search for in the index.
-     * @return a List of file paths that contain the requested keyword
+     * @return a Set of file paths that contain the requested keyword
      */
-    public abstract List<String> search(String keyword);
+    public abstract Set<File> search(String keyword);
 
     /**
      * Clears the index, useful when files are updated or deleted.
      */
     public abstract void clearIndex();
+
+    /**
+     * @return Returns a set of all files stored in the index.
+     */
+    public Set<File> getIndexedFiles() {
+        return this.index.getIndexedFiles();
+    }
+
 }

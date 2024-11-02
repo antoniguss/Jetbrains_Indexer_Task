@@ -1,36 +1,42 @@
 package indexing;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
+import java.io.File;
+import java.util.*;
 
 public class HashMapIndex implements Index {
-    final HashMap<String, List<String>> index;
+    final Set<File> indexedFiles;
+    final HashMap<String, Set<File>> index;
 
     public HashMapIndex() {
-        index = new HashMap<>();
+        this.indexedFiles = new HashSet<>();
+        this.index = new HashMap<>();
     }
 
     @Override
-    public void addToIndex(String token, String filePath) {
+    public void addToIndex(String token, File file) {
         if (!index.containsKey(token)) {
-            List<String> filePaths = new ArrayList<>();
-            filePaths.add(filePath);
+            Set<File> files = new HashSet<>();
+            files.add(file);
 
-            index.put(token, filePaths);
+            index.put(token, files);
         } else {
-            index.get(token).add(filePath);
+            index.get(token).add(file);
         }
     }
 
     @Override
-    public List<String> search(String query) {
-        return index.getOrDefault(query, new ArrayList<>());
+    public Set<File> search(String query) {
+        return index.getOrDefault(query, new HashSet<>());
     }
 
     @Override
     public void clearIndex() {
         this.index.clear();
+    }
+
+    @Override
+    public Set<File> getIndexedFiles() {
+        return this.indexedFiles;
     }
 
     @Override

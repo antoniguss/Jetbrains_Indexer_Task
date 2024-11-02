@@ -3,8 +3,10 @@ package indexing;
 import tokenizing.WhitespaceTokenizer;
 import util.FileHandling;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.List;
+import java.util.Set;
 
 public class SimpleFileIndexer extends FileIndexer {
 
@@ -14,19 +16,20 @@ public class SimpleFileIndexer extends FileIndexer {
     }
 
     @Override
-    public boolean indexFile(String filePath) {
+    public boolean indexFile(File file) {
+        System.out.println("Indexing file: " + file.getAbsolutePath());
 
-        String fileContents = "";
+        String fileContents;
         try {
-            fileContents = FileHandling.readTextFile(filePath);
+            fileContents = FileHandling.readTextFile(file);
         } catch (IOException e) {
-            System.out.println("Error reading file: " + filePath);
+            System.out.println("Error reading file: " + file.getAbsolutePath());
             return false;
         }
         List<String> tokenized = this.tokenizer.tokenize(fileContents);
 
         for (String token : tokenized) {
-            this.index.addToIndex(token, filePath);
+            this.index.addToIndex(token, file);
         }
 
 
@@ -34,8 +37,8 @@ public class SimpleFileIndexer extends FileIndexer {
     }
 
     @Override
-    public boolean indexFiles(String... filePath) {
-        for (String file : filePath) {
+    public boolean indexFiles(File... files) {
+        for (File file : files) {
             if (!indexFile(file)) {
                 this.clearIndex();
                 return false;
@@ -45,7 +48,7 @@ public class SimpleFileIndexer extends FileIndexer {
     }
 
     @Override
-    public List<String> search(String keyword) {
+    public Set<File> search(String keyword) {
         return this.index.search(keyword);
     }
 

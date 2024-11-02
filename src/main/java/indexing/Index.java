@@ -1,10 +1,15 @@
 package indexing;
 
-import java.util.List;
+import java.io.File;
+import java.util.Set;
 
+/**
+ * The Index interface defines methods for indexing, searching, and clearing indexes of files.
+ */
 public interface Index {
-    void addToIndex(String token, String filePath);
-    List<String> search(String query);
-
+    void addToIndex(String token, File file);
     void clearIndex();
+
+    Set<File> search(String query);
+    Set<File> getIndexedFiles();
 }
