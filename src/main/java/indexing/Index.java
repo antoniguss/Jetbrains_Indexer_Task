@@ -8,6 +8,7 @@ import java.util.Set;
  */
 public interface Index {
     void addToIndex(String token, File file);
+    void removeFileFromIndex(File file);
     void clearIndex();
 
     Set<File> search(String query);

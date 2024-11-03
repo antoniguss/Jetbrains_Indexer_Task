@@ -21,17 +21,15 @@ public class FileHandling {
         return Files.readString(file.toPath());
     }
 
-    public static String readTextFile(String filePath) throws IOException {
-        File file = new File(filePath);
-
-        return readTextFile(file);
-    }
-
 
     public static boolean isTextFile(File file) {
 
-        if (!file.exists() || !file.isFile()) {
-            System.out.println("File doesn't exist");
+        if (!file.exists()) {
+            System.out.printf("File %s doesn't exist", file.getAbsolutePath());
+            return false;
+        }
+
+        if (!file.isFile()) {
             return false;
         }
 
@@ -44,8 +42,7 @@ public class FileHandling {
             return mimeType.startsWith("text");
 
         } catch (IOException e) {
-
-            e.printStackTrace();
+            System.out.println("Error while checking file type: " + e.getMessage());
             return false;
         }
 
@@ -86,6 +83,7 @@ public class FileHandling {
         for (File f : filesInDirectory) {
             if (isTextFile(f)) {
                 textFiles.add(f);
+                continue;
             }
             if (recursive) {
 

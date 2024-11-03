@@ -3,17 +3,17 @@ import indexing.SimpleFileIndexer;
 import util.FileHandling;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.*;
 
 class Application implements Runnable {
     private final FileIndexer fileIndexer;
     private final Map<String, Command> commands;
-    private String currentDirectory;
+    private File currentDirectory;
 
     public Application() {
         this.fileIndexer = new SimpleFileIndexer();
-
-        this.currentDirectory = System.getProperty("user.dir");
+        this.currentDirectory = new File(System.getProperty("user.dir"));
         this.commands = new HashMap<>();
         this.initializeCommands();
     }
@@ -35,7 +35,7 @@ class Application implements Runnable {
 
         Scanner scanner = new Scanner(System.in);
         while (true) {
-            System.out.println("Working Directory: " + this.currentDirectory);
+            System.out.println("Working Directory: " + this.currentDirectory.getAbsolutePath());
             System.out.print("> ");
             String input = scanner.nextLine();
 
@@ -111,7 +111,12 @@ class Application implements Runnable {
         for (String filePath : filePaths) {
             // paths cannot contain quotation marks, so we remove them if one is present
             filePath = filePath.replaceAll("\"", "");
+
             File providedFile = new File(filePath);
+
+            if (!providedFile.isAbsolute()) {
+                providedFile = new File(this.currentDirectory, providedFile.getPath());
+            }
 
             List<File> files;
             if ((files = FileHandling.getTextFiles(providedFile, recursive)) != null) {
@@ -133,7 +138,7 @@ class Application implements Runnable {
             System.out.println("Please provide one keyword to search for.");
             return false;
         }
-        String keyword = args[0];
+        String keyword = args[0].trim().toLowerCase();
 
         Set<File> files = fileIndexer.search(keyword);
 
@@ -151,20 +156,40 @@ class Application implements Runnable {
 
     private boolean handleChangeDirectory(String[] args) {
 
-        if (args.length != 1) {
-            System.out.println("Please provide a directory path.");
-            return false;
+        if (args.length == 0) {
+            // If no argument is provided, we change to the user's home directory
+            this.currentDirectory = new File(System.getProperty("user.home"));
+            return true;
         }
 
         String directoryPath = args[0];
-        File currentDirectory = new File(directoryPath);
 
-        if (!currentDirectory.exists()) {
+
+        File providedDirectory = new File(directoryPath);
+        System.out.println("providedDirectory = " + providedDirectory);
+
+        File newCurrentDirectory;
+        if (providedDirectory.isAbsolute()) {
+            newCurrentDirectory = providedDirectory;
+        } else {
+            newCurrentDirectory = new File(this.currentDirectory, directoryPath);
+        }
+
+
+        // Make path canonical
+        try {
+            newCurrentDirectory = newCurrentDirectory.getCanonicalFile();
+        } catch (IOException e) {
+            System.out.println("Error while making path canonical: " + e.getMessage());
+            return false;
+        }
+
+        if (!newCurrentDirectory.exists()) {
             System.out.println("Directory doesn't exist.");
             return false;
         }
 
-        this.currentDirectory = currentDirectory.getAbsolutePath();
+        this.currentDirectory = new File(newCurrentDirectory.getAbsolutePath());
         System.out.println("Changed directory to: " + this.currentDirectory);
 
 
@@ -172,8 +197,18 @@ class Application implements Runnable {
     }
 
     private boolean handleListFiles(String[] args) {
-        // TODO: implement listing files
-        System.out.println("Listing files...");
+        File[] files = this.currentDirectory.listFiles();
+
+        if (files != null) {
+            for (File file : files) {
+                // If a file is a directory, we print its name followed by a slash
+                if (file.isDirectory()) {
+                    System.out.println(file.getName() + "/");
+                } else {
+                    System.out.println(file.getName());
+                }
+            }
+        }
         return true;
     }
 

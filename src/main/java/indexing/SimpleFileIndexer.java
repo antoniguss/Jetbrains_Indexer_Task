@@ -29,9 +29,8 @@ public class SimpleFileIndexer extends FileIndexer {
         List<String> tokenized = this.tokenizer.tokenize(fileContents);
 
         for (String token : tokenized) {
-            this.index.addToIndex(token, file);
+            this.index.addToIndex(token.toLowerCase(), file);
         }
-
 
         return true;
     }
@@ -49,7 +48,7 @@ public class SimpleFileIndexer extends FileIndexer {
 
     @Override
     public Set<File> search(String keyword) {
-        return this.index.search(keyword);
+        return this.index.search(keyword.toLowerCase());
     }
 
     @Override
