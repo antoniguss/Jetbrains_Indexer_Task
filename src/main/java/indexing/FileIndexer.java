@@ -55,4 +55,15 @@ public abstract class FileIndexer {
         return this.index.getIndexedFiles();
     }
 
+
+    public void removeFileFromIndex(File file) {
+        this.index.removeFileFromIndex(file);
+    }
+
+
+    public void updateFileInIndex(File file) {
+        this.index.removeFileFromIndex(file);
+        this.indexFile(file);
+    }
+
 }

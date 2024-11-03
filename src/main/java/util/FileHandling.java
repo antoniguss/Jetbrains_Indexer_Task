@@ -1,7 +1,6 @@
 package util;
 
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
@@ -45,8 +44,6 @@ public class FileHandling {
             System.out.println("Error while checking file type: " + e.getMessage());
             return false;
         }
-
-
     }
 
 

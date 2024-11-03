@@ -34,6 +34,17 @@ public class HashMapIndex implements Index {
     @Override
     public void removeFileFromIndex(File file) {
         this.indexedFiles.remove(file);
+
+        for (String token: this.index.keySet()) {
+            Set<File> files = this.index.get(token);
+            files.remove(file);
+            if (files.isEmpty()) {
+                this.index.remove(token);
+            } else {
+                this.index.put(token, files);
+            }
+
+        }
     }
 
     /**
@@ -49,16 +60,13 @@ public class HashMapIndex implements Index {
             return Collections.emptySet();
         }
 
-        filesFound.removeIf(file -> !indexedFiles.contains(file));
-
-        this.index.put(query, filesFound);
-
         return filesFound;
     }
 
     @Override
     public void clearIndex() {
         this.index.clear();
+        this.indexedFiles.clear();
     }
 
     @Override

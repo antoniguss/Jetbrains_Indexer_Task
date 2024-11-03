@@ -15,6 +15,10 @@ public class WhitespaceTokenizer implements Tokenizer {
 
     public List<String> tokenize(String text, boolean lowercase) {
 
+        if (text.isEmpty()) {
+            return List.of();
+        }
+
         List<String> tokens = List.of(text.split("\\s+"));
         if (lowercase) {
             tokens = tokens.stream().map(String::toLowerCase).toList();
