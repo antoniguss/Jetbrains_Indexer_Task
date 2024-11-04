@@ -22,8 +22,18 @@ The provided code includes an example of a simple whitespace tokenizer (`WhiteSp
 which simply splits text into tokens based on whitespaces (spaces, tabs, newlines, etc.).
 
 It also includes an index based on a hash map (`HashMapIndex`),
-which stores the indexed files and their contents in a hash map.
+which stores the tokens and the files where they appear in a hash map.
 
+## Functionality
+The application provides the following functionality:
+1. `help` - Displays a list of available commands.
+2. `index` - Indexes a list of files or directories. The `-r recursive` flag can be used to quickly index all files text in a directory and its subdirectories.
+3. `query` - Searches for files containing a specific keyword.
+4. `cd` - Changes the current working directory.
+5. `ls` - Lists the files in the current working directory.
+
+The `cd` and `ls` commands make it easier to navigate through the file system and pick the files to index.
+They mirror the functionality of the `cd` and `ls` commands in the shell.
 
 ## Usage
 
