@@ -6,9 +6,20 @@ import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
 
-
+/**
+ * Utility class for handling file operations, particularly for reading text files
+ * and identifying text file types within a given directory structure.
+ */
 public class FileHandling {
 
+    /**
+     * Reads the content of a text file.
+     *
+     * @param file The text file to read.
+     * @return The content of the file as a String.
+     * @throws IOException If an I/O error occurs reading from the file.
+     * @throws IllegalArgumentException If the file does not exist or is not a text file.
+     */
     public static String readTextFile(File file) throws IOException {
         if (!file.exists()) {
             throw new IllegalArgumentException(file.getAbsolutePath() + " doesn't exist.");
@@ -21,11 +32,16 @@ public class FileHandling {
         return Files.readString(file.toPath());
     }
 
-
+    /**
+     * Checks if a given file is a text file based on its MIME type.
+     *
+     * @param file The file to check.
+     * @return {@code true} if the file is a text file; {@code false} otherwise.
+     *         If the file does not exist or is not a file, this method will return false.
+     */
     public static boolean isTextFile(File file) {
-
         if (!file.exists()) {
-//            System.out.printf("File %s doesn't exist", file.getAbsolutePath());
+            System.out.printf("File %s doesn't exist", file.getAbsolutePath());
             return false;
         }
 
@@ -34,32 +50,34 @@ public class FileHandling {
         }
 
         try {
+            // We use the probeContentType method for a more universal and accurate way to check the file type
+            // This allows us to handle any type of file that stores text,
+            // regardless of the actual file extension
             String mimeType = Files.probeContentType(file.toPath());
             if (mimeType == null) {
-//                System.out.println("Could not determine file type");
+                System.out.println("Could not determine file type");
                 return false;
             }
             return mimeType.startsWith("text");
 
         } catch (IOException e) {
-//            System.out.println("Error while checking file type: " + e.getMessage());
+            System.out.println("Error while checking file type: " + e.getMessage());
             return false;
         }
     }
 
-
     /**
-     * Returns a list of text files in the given directory and its subdirectories.
-     * If the provided file argument is a text file, we return a list containing that file.
+     * Retrieves a list of text files from the specified file or directory.
+     * If the provided file is a text file, it will be included in the list.
      *
-     * @param file      The file or directory
-     * @param recursive Whether to search recursively
-     * @return A list of text files in the given directory and its subdirectories.
-     * Returns {@code null} if the file or directory doesn't exist or is neither a text file nor a directory.
+     * @param file      The file or directory to search for text files.
+     * @param recursive Whether to search recursively through subdirectories.
+     * @return A list of text files found in the specified directory and its subdirectories,
+     *         or {@code null} if the file or directory does not exist or is not a text file or directory.
      */
     public static List<File> getTextFiles(File file, boolean recursive) {
         if (!file.exists()) {
-//            System.out.printf("File %s doesn't exist", file.getAbsolutePath());
+            System.out.printf("File %s doesn't exist", file.getAbsolutePath());
             return null;
         }
 
@@ -68,7 +86,7 @@ public class FileHandling {
         }
 
         if (!file.isDirectory()) {
-//            System.out.printf("%s is not a directory", file.getAbsolutePath());
+            System.out.printf("%s is neither a text file nor a directory, skipping", file.getAbsolutePath());
             return null;
         }
 
@@ -85,7 +103,6 @@ public class FileHandling {
                 continue;
             }
             if (recursive) {
-
                 List<File> filesRecursively = getTextFiles(f, true);
                 if (filesRecursively != null) {
                     textFiles.addAll(filesRecursively);
@@ -94,7 +111,5 @@ public class FileHandling {
         }
 
         return textFiles;
-
     }
-
 }

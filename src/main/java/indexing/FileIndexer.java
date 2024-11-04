@@ -29,6 +29,7 @@ public abstract class FileIndexer {
 
     /**
      * Indexes multiple files specified by their file paths.
+     * All files must be correctly indexed, if not, the index should be cleared and the method should return false.
      *
      * @param file variable number of files to be indexed
      * @return a boolean value indicating whether the indexing operation was successful or not
@@ -57,6 +58,11 @@ public abstract class FileIndexer {
     }
 
 
+    /**
+     * Removes a file from the index.
+     *
+     * @param file The file to remove from the index.
+     */
     public void removeFileFromIndex(File file) {
         this.index.removeFileFromIndex(file);
     }
