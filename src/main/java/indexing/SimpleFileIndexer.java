@@ -23,7 +23,10 @@ public class SimpleFileIndexer extends FileIndexer {
         try {
             fileContents = FileHandling.readTextFile(file);
         } catch (IOException e) {
-            System.out.println("Error reading file: " + file.getAbsolutePath());
+//            System.out.println("Error reading file: " + file.getAbsolutePath());
+            return false;
+        } catch (IllegalArgumentException e) {
+//            System.out.printf("File is not a text file: %s, skipping%n", file.getAbsolutePath());
             return false;
         }
         List<String> tokenized = this.tokenizer.tokenize(fileContents);
@@ -45,6 +48,7 @@ public class SimpleFileIndexer extends FileIndexer {
         }
         return true;
     }
+
 
     @Override
     public Set<File> search(String keyword) {

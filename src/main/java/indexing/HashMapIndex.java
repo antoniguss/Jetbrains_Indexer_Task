@@ -27,25 +27,27 @@ public class HashMapIndex implements Index {
 
     /**
      * Removes a file from the index.
-     * NOTE: This method doesn't remove the file from the HashMap index as this would require iterating over the entire key set.
-     * If a file that was removed is found during a search, it will be removed from the hashmap index.
+     * Note:
+     * This requires iterating over the entire key set
+     * and might be inefficient for indexes with a large number of tokens.
      * @param file The file to be removed from the index.
      */
     @Override
     public void removeFileFromIndex(File file) {
+        if (!this.indexedFiles.contains(file)) {
+            return;
+        }
         this.indexedFiles.remove(file);
 
-        for (String token: this.index.keySet()) {
-            Set<File> files = this.index.get(token);
-            files.remove(file);
-            if (files.isEmpty()) {
+        List<String> tokens = new ArrayList<>(this.index.keySet());
+        for (String token: tokens) {
+            this.index.get(token).remove(file);
+            if (this.index.get(token).isEmpty()) {
                 this.index.remove(token);
-            } else {
-                this.index.put(token, files);
             }
-
         }
     }
+
 
     /**
      * Searches the index for files containing a particular phrase or keyword.

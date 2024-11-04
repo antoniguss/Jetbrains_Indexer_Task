@@ -125,13 +125,31 @@ class Application implements Runnable {
 
         }
 
-        if (!fileIndexer.indexFiles(textFiles.toArray(new File[0]))) {
-            System.out.println("Error while indexing files. The index was not created.");
-            return false;
+        for (File textFile : textFiles) {
+            if (!this.fileIndexer.getIndexedFiles().contains(textFile)) {
+                if (!this.fileIndexer.indexFile(textFile)) {
+                    System.out.println("Error while indexing file: " + textFile.getAbsolutePath());
+                    return false;
+                }
+                continue;
+            }
+
+            // Ask if the user wants to update the index for the file
+            System.out.println("File already indexed. Update? (y/n)");
+            Scanner scanner = new Scanner(System.in);
+            String input = scanner.nextLine();
+            if (input.equalsIgnoreCase("y")) {
+                if (!this.fileIndexer.updateFileInIndex(textFile)) {
+                    System.out.println("Error while updating index for file: " + textFile.getAbsolutePath());
+                    return false;
+                }
+            }
         }
+
 
         return true;
     }
+
 
     private boolean handleFileSearch(String[] args) {
         if (args.length != 1) {
@@ -214,6 +232,7 @@ class Application implements Runnable {
 
     /**
      * Asks the user if they want to exit the application.
+     *
      * @return true if the user wants to exit the application, false otherwise
      */
     private boolean exitApplication(String[] ignored) {

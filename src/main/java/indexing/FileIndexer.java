@@ -1,4 +1,5 @@
 package indexing;
+
 import tokenizing.Tokenizer;
 
 import java.io.File;
@@ -61,9 +62,20 @@ public abstract class FileIndexer {
     }
 
 
-    public void updateFileInIndex(File file) {
-        this.index.removeFileFromIndex(file);
-        this.indexFile(file);
+    /**
+     * Updates the index for a given file.
+     * If the file is already indexed, it will be removed from the index first.
+     * The provided file will then be indexed.
+     *
+     * @param file The file to be indexed.
+     */
+    public boolean updateFileInIndex(File file) {
+
+        if (this.index.getIndexedFiles().contains(file)) {
+            this.index.removeFileFromIndex(file);
+        }
+
+        return this.indexFile(file);
     }
 
 }
