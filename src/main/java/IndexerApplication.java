@@ -5,6 +5,8 @@ import util.FileHandling;
 import java.io.File;
 import java.io.IOException;
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * The IndexerApplication class manages the command-line interface (CLI)
@@ -26,6 +28,7 @@ class IndexerApplication implements Runnable {
         this.commands = new HashMap<>();
         this.initializeCommands(); // Set up available commands
     }
+
 
     /**
      * Initializes the command map with available commands and their handlers.
@@ -53,11 +56,11 @@ class IndexerApplication implements Runnable {
             if (input.isEmpty()) {
                 continue; // Skip empty input
             }
-            // Split input into command and arguments
-            String[] parts = input.split("\\s+");
+            // Split input into command and arguments. Some arguments might be wrapped in quotes.
+            String[] parts = parseCommand(input);
+
             String command = parts[0];
             String[] args = parts.length > 1 ? Arrays.copyOfRange(parts, 1, parts.length) : new String[0];
-
             // Check for exit command
             if (command.equals("exit")) {
                 if (commands.get("exit").execute(args)) {
@@ -90,7 +93,7 @@ class IndexerApplication implements Runnable {
      */
     private boolean displayHelp(String[] ignored) {
         System.out.println("Available commands:");
-        System.out.println("1. index [-r recursively] <path1> <path2> ... <pathN> - Index all text files in the specified directories and files.");
+        System.out.println("1. index [-r recursively] <path1> <path2> ... <pathN> - Index all text files in the specified directories and files. If a path contains a space, it can be placed between quotation marks.");
         System.out.println("2. query <word> - Find files containing the specified word in the stored index.");
         System.out.println("3. cd <path> - Change the current directory.");
         System.out.println("4. ls - List all files in the current directory.");
@@ -131,8 +134,6 @@ class IndexerApplication implements Runnable {
         List<File> textFiles = new ArrayList<>();
 
         for (String filePath : filePaths) {
-            // Remove quotes from the file path
-            filePath = filePath.replaceAll("\"", "");
             File providedFile = new File(filePath);
 
             // If the provided path is not absolute, we assume it's relative to the current directory
@@ -145,6 +146,11 @@ class IndexerApplication implements Runnable {
             if (files != null) {
                 textFiles.addAll(files);
             }
+        }
+
+        if (textFiles.isEmpty()) {
+            System.out.println(wrongInputMessage);
+            return false;
         }
 
         // Index each text file
@@ -289,5 +295,29 @@ class IndexerApplication implements Runnable {
          * @return true if the command executed successfully, false otherwise.
          */
         boolean execute(String[] args);
+    }
+
+    /**
+     * Parses a command string into an array of arguments.
+     * <p>
+     * Example: {@code "one argument" separate arguments "another argument"}
+     * will be parsed into {@code ["one argument", "separate", "arguments", "another argument"]}
+     * @param cmd The command string to parse.
+     * @return An array of arguments.
+     */
+    public static String[] parseCommand(String cmd) {
+        if (cmd == null || cmd.isEmpty()) {
+            return new String[]{};
+        }
+
+        cmd = cmd.trim();
+        String regExp = "\"(\\\\\"|[^\"])*?\"|[^ ]+";
+        Pattern pattern = Pattern.compile(regExp, Pattern.MULTILINE | Pattern.CASE_INSENSITIVE);
+        Matcher matcher = pattern.matcher(cmd);
+        List<String> matches = new ArrayList<>();
+        while (matcher.find()) {
+            matches.add(matcher.group());
+        }
+        return matches.toArray(new String[]{});
     }
 }

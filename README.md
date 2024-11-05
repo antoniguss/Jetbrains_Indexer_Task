@@ -120,5 +120,4 @@ Tests can be run using JUnit.
 - [Check given file is Simple Text File using Java - Stack Overflow](https://stackoverflow.com/questions/17192770/check-given-file-is-simple-text-file-using-java)
 - [fawitte/interactive-cli: An interactive cli for Java that can be used for example for prototyping applications with multiple threads that need to be controlled during runtime (e.g. server or client).](https://github.com/fawitte/interactive-cli)
 - [Wikipedia](https://www.wikipedia.org/) For long text files written in English.
-
-
+- [java - How to split a command line like string? - Stack Overflow](https://stackoverflow.com/questions/13495449/how-to-split-a-command-line-like-string) - For parsing command line arguments with spaces.

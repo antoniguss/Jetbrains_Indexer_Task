@@ -41,7 +41,7 @@ public class FileHandling {
      */
     public static boolean isTextFile(File file) {
         if (!file.exists()) {
-            System.out.printf("File %s doesn't exist", file.getAbsolutePath());
+            System.out.printf("File %s doesn't exist%n", file.getAbsolutePath());
             return false;
         }
 
@@ -77,7 +77,7 @@ public class FileHandling {
      */
     public static List<File> getTextFiles(File file, boolean recursive) {
         if (!file.exists()) {
-            System.out.printf("File %s doesn't exist", file.getAbsolutePath());
+            System.out.printf("File %s doesn't exist%n", file.getAbsolutePath());
             return null;
         }
 
