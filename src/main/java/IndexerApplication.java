@@ -241,7 +241,12 @@ class IndexerApplication implements Runnable {
 
         // Check if the directory exists
         if (!newCurrentDirectory.exists()) {
-            System.out.println("Directory doesn't exist.");
+            System.out.printf("Directory %s doesn't exist.%n", newCurrentDirectory.getAbsolutePath());
+            return false;
+        }
+
+        if (!newCurrentDirectory.isDirectory()) {
+            System.out.printf("%s is not a directory.%n", newCurrentDirectory.getAbsolutePath());
             return false;
         }
 
@@ -316,7 +321,9 @@ class IndexerApplication implements Runnable {
         Matcher matcher = pattern.matcher(cmd);
         List<String> matches = new ArrayList<>();
         while (matcher.find()) {
-            matches.add(matcher.group());
+            String group = matcher.group();
+            group = group.replaceAll("\"", "");
+            matches.add(group);
         }
         return matches.toArray(new String[]{});
     }
